@@ -40,8 +40,8 @@ void ParseCitySubjson(vector<City>& cities, const Json& json, const Country& cou
     for (const auto& city_json : json.AsList()) {
         const auto& city_obj = city_json.AsObject();
         cities.push_back({city_obj["name"s].AsString(), city_obj["iso_code"s].AsString(),
-                          country_phone_code + city_obj["phone_code"s].AsString(), country_name, country_iso_code,
-                          country_time_zone, languages});
+                          country.phone_code + city_obj["phone_code"s].AsString(), country.name, country.iso_code,
+                          country.time_zone, country.languages});
     }
 }
 
@@ -49,17 +49,23 @@ void ParseCitySubjson(vector<City>& cities, const Json& json, const Country& cou
 void ParseCountryJson(vector<Country>& countries, vector<City>& cities, const Json& json) {
     for (const auto& country_json : json.AsList()) {
         const auto& country_obj = country_json.AsObject();
-        countries.push_back({
-            country_obj["name"s].AsString(),
-            country_obj["iso_code"s].AsString(),
-            country_obj["phone_code"s].AsString(),
-            country_obj["time_zone"s].AsString(),
-        });
-        Country& country = countries.back();
+
+        CountryBuilder builder = CountryBuilder()
+            .SetName(country_obj["name"s].AsString())
+            .SetIsoCode(country_obj["iso_code"s].AsString())
+            .SetPhoneCode(country_obj["phone_code"s].AsString())
+            .SetTimeZone(country_obj["time_zone"s].AsString());
+
+        vector<Language> languages;
         for (const auto& lang_obj : country_obj["languages"s].AsList()) {
-            country.languages.push_back(FromString<Language>(lang_obj.AsString()));
+            languages.push_back(FromString<Language>(lang_obj.AsString()));
         }
-        ParseCitySubjson(cities, country_obj["cities"s], country.name, country.iso_code, country.phone_code,
-                         country.time_zone, country.languages);
+
+        builder = builder.SetLanguages(languages);
+
+        countries.push_back(builder);
+
+        ParseCitySubjson(cities, country_obj["cities"s], { country.name, country.iso_code, country.phone_code,
+                         country.time_zone, country.languages });
     }
 }
