@@ -52,7 +52,7 @@ public:
         , os(os) {
     }
 
-    void GetQuery() const {
+    void GetQuery(Ebook& ebook) const {
         using namespace std::string_literals;
 
         Ebook ebook;
@@ -87,7 +87,9 @@ private:
 int main() {
     QueryHandler query_handler;
 
-    query_handler.GetQuery();
+    Ebook ebook;
+
+    query_handler.GetQuery(ebook);
 
     return 0;
 }
