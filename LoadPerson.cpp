@@ -12,7 +12,7 @@ struct PersonBuilder {
 };
 
 vector<Person> LoadPersons(const PersonBuilder& builder) {
-    DBConnector connector(builder.allow_exceptions, builder.og_level);
+    DBConnector connector(builder.allow_exceptions, builder.log_level);
     DBHandler db;
     if (builder.name.starts_with("tmp."s)) {
         db = connector.ConnectTmp(builder.name, builder.connection_timeout);
