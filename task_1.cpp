@@ -54,8 +54,6 @@ public:
 
     void GetQuery(Ebook& ebook) const {
         using namespace std::string_literals;
-
-        Ebook ebook;
         
         int Q;
         is >> Q;
